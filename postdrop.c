@@ -52,9 +52,10 @@ void PDget(const char *hostname, const char *shorturl) {
 
     /* Perform request and handle error or success */
     res = curl_easy_perform(curl);
-    if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n",
-      curl_easy_strerror(res));
+    long http_code = -1;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+    if(http_code != 200) {
+      fprintf(stderr, "Request failed: %d\n", http_code);
     } else {
       /* JSON Parsing */
       json_t *root, *message, *title;
