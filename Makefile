@@ -1,5 +1,5 @@
 SOURCES=main.c postdrop.c
-FLAGS=lib/libcrypto.a lib/liboath.a lib/libcurl.a lib/libjansson.a -lssl -lcrypto -lssl -lcrypto -lz -DCURL_STATICLIB -Iinclude
+FLAGS=lib/liboath.a lib/libcurl.a lib/libjansson.a  -lssl -lcrypto -lz -DCURL_STATICLIB -Iinclude
 TARGET=postdrop
 
 all:

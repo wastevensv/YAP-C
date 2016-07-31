@@ -16,8 +16,13 @@ int main(int argc, char *argv[]) {
   primary[16]='\0';
   fclose(fo);
   
+  FILE *fu = fopen("username.key", "r");
+  char username[17];
+  fread(username, 1, 16 , fu);
+  primary[16]='\0';
+  fclose(fu);
 
-  PDinit(hostname, "wasv", primary, otpsecret);
+  PDinit(hostname, username, primary, otpsecret);
   if(argc > 1) {
     PDget(argv[1]);
   } else {
