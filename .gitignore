@@ -2,6 +2,8 @@
 !*/
 !*.*
 !Makefile
+*.key
+
 # Object files
 *.o
 *.ko
