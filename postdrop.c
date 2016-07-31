@@ -45,19 +45,19 @@ void PDinit(const char *sHostname, const char *sUsername, const char *sPrimary, 
 
 void getauth(char *authtoken) {
   char totp[7];
-  oath_totp_generate(otpsecret, 10, time(NULL), 0, 0, 6, totp);
-  puts(totp);
+  char *rawsecret;
+  size_t secretlen;
+  oath_base32_decode(otpsecret, 16, &rawsecret, &secretlen);
+  oath_totp_generate(rawsecret, secretlen, time(NULL), 0, 0, 6, totp);
   
   char prehash[23];
   strcpy(prehash, primary);
   strcat(prehash, totp);
-  puts(prehash);
   char rawhash[MD5_DIGEST_LENGTH];
   MD5(prehash, strlen(prehash), rawhash);
   for(int i=0; i < MD5_DIGEST_LENGTH; i++) {
     sprintf(&(authtoken[i*2]), "%02x", (unsigned char)rawhash[i]);
   }
-  puts(authtoken);
 }
 
 void PDgetpriv(const char *shorturl) {
@@ -85,9 +85,7 @@ void PDgetpriv(const char *shorturl) {
     /* build auth data */
     char auth[33];
     getauth(auth);
-    puts(auth);
     char *data = json_dumps(json_pack("{s:s}","auth",auth), 0);
-    puts(data);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(data));
     curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, data);
 
@@ -103,7 +101,6 @@ void PDgetpriv(const char *shorturl) {
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
     if(http_code != 200) {
       fprintf(stderr, "Request failed: %d\n", http_code);
-      fprintf(stderr, chunk.memory);
     } else {
       /* JSON Parsing */
       json_t *root, *message, *title;
@@ -121,14 +118,14 @@ void PDgetpriv(const char *shorturl) {
       }
 
       message = json_object_get(root, "text");
-      if(!json_is_string(message)) {
+      if(!json_is_string(message) && !json_is_null(message)) {
         fprintf(stderr, "Unexpected JSON");
         return;
       }
       message_text = json_string_value(message);
 
       title = json_object_get(root, "title");
-      if(!json_is_string(message)) {
+      if(!json_is_string(message) && !json_is_null(message)) {
         fprintf(stderr, "Unexpected JSON");
         return;
       }
