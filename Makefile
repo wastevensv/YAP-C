@@ -1,4 +1,4 @@
-SOURCES=main.c postdrop.c
+SOURCES=main.c postdrop.c trim.c
 FLAGS=lib/liboath.a lib/libcurl.a lib/libjansson.a  -lssl -lcrypto -lz -DCURL_STATICLIB -Iinclude
 TARGET=postdrop
 

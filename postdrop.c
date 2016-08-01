@@ -13,7 +13,7 @@
 char username[17];
 char otpsecret[17];
 char primary[17];
-char hostname[256];
+char hostname[128];
 
 struct MemoryStruct {
   char *memory;
@@ -41,6 +41,9 @@ void PDinit(const char *sHostname, const char *sUsername, const char *sPrimary, 
   strcpy(username,  sUsername);
   strcpy(primary,   sPrimary);
   strcpy(otpsecret, sOtpsecret);
+
+  puts(primary);
+  puts(otpsecret);
 }
 
 void getauth(char *authtoken) {
@@ -220,7 +223,7 @@ void PDlist() {
   curl = curl_easy_init();
   if(curl) {
     /* Build URL */
-    char url[256];
+    char url[257];
     strcpy(url,hostname);
     strcat(url,"/note/");
 
